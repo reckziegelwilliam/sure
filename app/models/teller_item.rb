@@ -9,6 +9,10 @@ class TellerItem < ApplicationRecord
 
   validates :name, :access_token, :enrollment_id, presence: true
 
+  scope :active, -> { where(scheduled_for_deletion: false) }
+  scope :syncable, -> { active }
+  scope :ordered, -> { order(created_at: :desc) }
+
   def institution_color
     nil
   end
