@@ -1,10 +1,9 @@
 <%# app/views/teller_items/_connection.html.erb
-     Named "connection", not "_teller_item", so it doesn't match the
-     app/views/*_items/_*_item.html.erb glob ProviderItemCardsTest uses to
-     find every provider's accounts-index card (which must take a mandatory
-     visible_accounts: local, per #3630). This partial is the settings-panel
-     connection row only — it lists no accounts, so that contract doesn't
-     apply here. %>
+     This is the Settings > Providers panel row for a Teller connection — it
+     lists no accounts, just name/status/sync/delete controls. The
+     accounts-index card (the one subject to the #3630 visible_accounts
+     contract enforced by ProviderItemCardsTest) is the separate
+     teller_items/_teller_item.html.erb partial. %>
 <div id="<%= dom_id(teller_item) %>" class="flex items-center justify-between py-3">
   <div class="flex items-center gap-3">
     <%= render ProviderLogo.new(provider_key: :teller) %>

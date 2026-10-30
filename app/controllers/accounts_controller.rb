@@ -31,6 +31,7 @@ class AccountsController < ApplicationController
     @enable_banking_items = visible_provider_items(family.enable_banking_items.ordered.with_attached_logo)
     @coinstats_items = visible_provider_items(family.coinstats_items.ordered.with_attached_logo.includes(:coinstats_accounts, :accounts))
     @mercury_items = visible_provider_items(family.mercury_items.ordered.with_attached_logo.includes(:mercury_accounts))
+    @teller_items = visible_provider_items(family.teller_items.ordered.includes(:teller_accounts, :accounts))
     @brex_items = visible_provider_items(family.brex_items.ordered.with_attached_logo.includes(:accounts, brex_accounts: :account_provider))
     @coinbase_items = visible_provider_items(family.coinbase_items.ordered.with_attached_logo.includes(:coinbase_accounts, :accounts))
     @snaptrade_items = visible_provider_items(family.snaptrade_items.ordered.with_attached_logo.includes(:snaptrade_accounts))
@@ -489,6 +490,7 @@ class AccountsController < ApplicationController
         @enable_banking_items,
         @coinstats_items,
         @mercury_items,
+        @teller_items,
         @brex_items,
         @coinbase_items,
         @snaptrade_items,

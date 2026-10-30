@@ -1,10 +1,9 @@
 class TellerItem < ApplicationRecord
-  include Syncable, Unlinking, DestroyableLater
+  include Syncable, Unlinking, DestroyableLater, ProviderItemOwnable
 
   enum :status, { good: "good", requires_update: "requires_update" }, default: :good
 
   belongs_to :family
-  belongs_to :owner, class_name: "User", optional: true
   has_many :teller_accounts, dependent: :destroy
   has_many :accounts, through: :teller_accounts
 
@@ -59,6 +58,46 @@ class TellerItem < ApplicationRecord
     rescue => e
       Rails.logger.error "TellerItem #{id} - Failed to schedule sync for account #{account.id}: #{e.class} - #{e.message}"
       { account_id: account.id, success: false, error: e.message }
+    end
+  end
+
+  def has_completed_initial_setup?
+    accounts.any?
+  end
+
+  # Linked accounts (have AccountProvider association)
+  def linked_teller_accounts
+    teller_accounts.joins(:account_provider)
+  end
+
+  # Unlinked accounts (no AccountProvider association)
+  def unlinked_teller_accounts
+    teller_accounts.left_joins(:account_provider).where(account_providers: { id: nil })
+  end
+
+  def linked_accounts_count
+    teller_accounts.joins(:account_provider).count
+  end
+
+  def unlinked_accounts_count
+    teller_accounts.left_joins(:account_provider).where(account_providers: { id: nil }).count
+  end
+
+  def total_accounts_count
+    teller_accounts.count
+  end
+
+  def sync_status_summary
+    total = total_accounts_count
+    linked = linked_accounts_count
+    unlinked = unlinked_accounts_count
+
+    if total == 0
+      I18n.t("teller_items.sync_status.no_accounts")
+    elsif unlinked == 0
+      I18n.t("teller_items.sync_status.synced", count: linked)
+    else
+      I18n.t("teller_items.sync_status.synced_with_setup", linked: linked, unlinked: unlinked)
     end
   end
 end

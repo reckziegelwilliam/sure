@@ -11,6 +11,24 @@ en:
     sync_status:
       good: "Connected"
       requires_update: "Needs reconnection"
+      no_accounts: "No accounts yet"
+      synced:
+        one: "%{count} account synced"
+        other: "%{count} accounts synced"
+      synced_with_setup: "%{linked} linked, %{unlinked} need setup"
+    teller_item:
+      delete: Delete connection
+      deletion_in_progress: deletion in progress...
+      error: Error
+      no_accounts_description: This connection has no linked accounts yet.
+      no_accounts_title: No accounts
+      setup_action: Set Up New Accounts
+      setup_description: "%{linked} of %{total} accounts linked. Choose account types for your newly imported Teller accounts."
+      setup_needed: New accounts ready to set up
+      status: "Synced %{timestamp} ago"
+      status_never: Never synced
+      status_with_summary: "Last synced %{timestamp} ago - %{summary}"
+      syncing: Syncing...
     select_existing_account:
       title: "Link %{account_name} to Teller"
       link_account: "Link account"
@@ -19,3 +37,35 @@ en:
       wait_for_sync: "If you just connected or synced, try again after the sync completes."
     link_existing_account:
       success: "Account linked successfully."
+    setup_accounts:
+      title: "Set Up Your Teller Accounts"
+      subtitle: "Choose the correct account types for your imported accounts"
+      account_type_label: "Account Type:"
+      choose_account_type: "Choose the correct account type for each Teller account:"
+      balance: Balance
+      cancel: Cancel
+      create_accounts: Create Accounts
+      creating_accounts: Creating Accounts...
+      no_accounts_to_setup: "No Accounts to Set Up"
+      all_accounts_linked: "All your Teller accounts have already been set up."
+      account_types:
+        skip: Skip this account
+        depository: Checking or Savings Account
+        credit_card: Credit Card
+      subtype_labels:
+        depository: "Account Subtype:"
+        credit_card: ""
+      subtype_messages:
+        credit_card: "Credit cards will be automatically set up as credit card accounts."
+      subtypes:
+        depository:
+          checking: Checking
+          savings: Savings
+          hsa: Health Savings Account
+          cd: Certificate of Deposit
+          money_market: Money Market
+    complete_account_setup:
+      all_skipped: "All accounts were skipped. No accounts were created."
+      creation_failed: "Failed to create accounts: %{error}"
+      no_accounts: "No accounts to set up."
+      success: "Successfully created %{count} account(s)."

@@ -168,6 +168,47 @@ class AccountsControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, unshared.name
   end
 
+  test "a partially shared member sees only their account on a Teller card" do
+    item = TellerItem.create!(
+      family: families(:dylan_family), name: "Teller Conn 235",
+      access_token: "token_235", enrollment_id: "enr_235", institution_name: "Chase"
+    )
+    shared, unshared = link_two_accounts_to(item) do |teller_item, index|
+      teller_item.teller_accounts.create!(
+        name: "Teller #{index}", teller_account_id: "teller_235_#{index}", currency: "USD",
+        current_balance: 1, account_type: "depository"
+      )
+    end
+
+    sign_in users(:family_member)
+    get accounts_url
+
+    assert_response :success
+    assert_select "##{dom_id(item)}"
+    assert_select "turbo-frame##{dom_id(shared)}", count: 1
+    assert_select "turbo-frame##{dom_id(unshared)}", count: 0
+    assert_not_includes response.body, unshared.name
+  end
+
+  test "an admin still sees every account on a Teller card" do
+    item = TellerItem.create!(
+      family: families(:dylan_family), name: "Teller Conn 236",
+      access_token: "token_236", enrollment_id: "enr_236", institution_name: "Chase"
+    )
+    shared, unshared = link_two_accounts_to(item) do |teller_item, index|
+      teller_item.teller_accounts.create!(
+        name: "Teller #{index}", teller_account_id: "teller_236_#{index}", currency: "USD",
+        current_balance: 1, account_type: "depository"
+      )
+    end
+
+    get accounts_url
+
+    assert_response :success
+    assert_select "turbo-frame##{dom_id(shared)}", count: 1
+    assert_select "turbo-frame##{dom_id(unshared)}", count: 1
+  end
+
   # The card's other name-bearing lists. The sync summary's detail rows come
   # from the connection's last sync and name the accounts and transactions
   # involved, so they follow the same rule as the account list: shown only to
