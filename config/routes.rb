@@ -882,6 +882,8 @@ Rails.application.routes.draw do
   resources :teller_items, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
     member do
       post :sync
+      get :setup_accounts
+      post :complete_account_setup
     end
     collection do
       get :select_existing_account

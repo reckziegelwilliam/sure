@@ -95,4 +95,60 @@ class TellerItemsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "setup_accounts renders each unlinked teller account" do
+    item = teller_items(:chase_connection)
+    unlinked = item.teller_accounts.create!(teller_account_id: "acc_unlinked_setup", name: "Needs Setup")
+
+    get setup_accounts_teller_item_path(item)
+
+    assert_response :success
+    assert_select "input[name='account_types[#{unlinked.id}]']", false
+    assert_select "select[name='account_types[#{unlinked.id}]']"
+  end
+
+  test "setup_accounts does not list already-linked teller accounts" do
+    item = teller_items(:chase_connection)
+    linked = item.teller_accounts.create!(teller_account_id: "acc_linked_setup", name: "Already Set Up")
+    account = Account.create!(
+      family: @family, name: "Linked Account", currency: "USD", balance: 0,
+      accountable_type: "Depository", accountable: Depository.create!(subtype: "checking")
+    )
+    AccountProvider.create!(account: account, provider: linked)
+
+    get setup_accounts_teller_item_path(item)
+
+    assert_response :success
+    assert_select "select[name='account_types[#{linked.id}]']", false
+  end
+
+  test "complete_account_setup creates accounts only for truly unlinked teller accounts" do
+    item = teller_items(:chase_connection)
+
+    linked = item.teller_accounts.create!(teller_account_id: "acc_l_1", name: "Linked", current_balance: 5, currency: "USD")
+    linked_account = Account.create!(
+      family: @family, name: "Already Linked", currency: "USD", balance: 0,
+      accountable_type: "Depository", accountable: Depository.create!(subtype: "savings")
+    )
+    AccountProvider.create!(account: linked_account, provider: linked)
+
+    unlinked = item.teller_accounts.create!(teller_account_id: "acc_cc_1", name: "New CC", current_balance: -20, currency: "USD")
+    skipped = item.teller_accounts.create!(teller_account_id: "acc_skip_1", name: "Skip Me", current_balance: 1, currency: "USD")
+
+    assert_enqueued_with(job: SyncJob) do
+      assert_difference "Account.count", 1 do
+        post complete_account_setup_teller_item_path(item), params: {
+          account_types: { unlinked.id => "CreditCard", skipped.id => "skip" },
+          account_subtypes: { unlinked.id => "credit_card" }
+        }
+      end
+    end
+
+    assert_response :see_other
+    assert_redirected_to accounts_path
+
+    assert_not_nil unlinked.reload.account_provider
+    assert_nil skipped.reload.account_provider
+    assert_equal linked_account.id, linked.reload.account&.id
+  end
 end
