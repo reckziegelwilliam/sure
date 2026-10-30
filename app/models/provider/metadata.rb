@@ -4,6 +4,7 @@ class Provider
       financekit:     { region: "US / UK", kinds: %w[Bank],            maturity: :beta,   logo_text: "AW", logo_color: nil, domain: "apple.com", name: "Apple Wallet" },
       akahu:          { region: "NZ",      kinds: %w[Bank Investment], maturity: :beta,   logo_text: "AK", logo_color: "#059669", domain: "akahu.nz" },
       simplefin:      { region: "US",      kinds: %w[Bank Investment], maturity: :stable, logo_text: "SF", logo_color: "#2563eb", domain: "simplefin.org" },
+      teller:         { region: "US",      kinds: %w[Bank],            maturity: :beta,   logo_text: "TL", logo_color: "#000000", domain: "teller.io" },
       lunchflow:      { region: "Global",  kinds: %w[Bank],            maturity: :stable, logo_text: "LF", logo_color: "#f97316", domain: "lunchflow.app" },
       up:             { region: "AU",      kinds: %w[Bank],            maturity: :beta,   logo_text: "UP", logo_color: "#ea580c", domain: "up.com.au" },
       monobank:       { region: "UA",      kinds: %w[Bank],            maturity: :alpha,  logo_text: "MB", logo_color: "#111827", domain: "monobank.ua" },
