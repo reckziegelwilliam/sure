@@ -1,5 +1,5 @@
 class TellerItem < ApplicationRecord
-  include Syncable
+  include Syncable, DestroyableLater
 
   belongs_to :family
   belongs_to :owner, class_name: "User", optional: true
