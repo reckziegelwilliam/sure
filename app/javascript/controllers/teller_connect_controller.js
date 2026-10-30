@@ -10,28 +10,13 @@ export default class extends Controller {
 
   connect() {
     this._connectionToken = (this._connectionToken ?? 0) + 1;
-    const connectionToken = this._connectionToken;
 
-    this.waitForTellerConnect()
-      .then(() => {
-        if (connectionToken !== this._connectionToken) return;
-
-        this.tellerConnect = TellerConnect.setup({
-          applicationId: this.applicationIdValue,
-          environment: this.environmentValue,
-          products: ["transactions", "balance"],
-          onSuccess: (enrollment) => {
-            this.accessTokenTarget.value = enrollment.accessToken;
-            this.enrollmentIdTarget.value = enrollment.enrollment.id;
-            this.institutionNameTarget.value =
-              enrollment.enrollment.institution.name;
-            this.formTarget.requestSubmit();
-          },
-        });
-      })
-      .catch((error) => {
-        console.error("Failed to load Teller Connect script", error);
-      });
+    // Preload eagerly so the widget is usually ready before the user clicks
+    // "Connect with Teller" -- but open() below retries this itself, so a
+    // failure here doesn't permanently disable the button.
+    this.ensureSetup().catch((error) => {
+      console.error("Failed to load Teller Connect script", error);
+    });
   }
 
   disconnect() {
@@ -98,6 +83,41 @@ export default class extends Controller {
   }
 
   open() {
-    this.tellerConnect?.open();
+    this.ensureSetup()
+      .then((tellerConnect) => tellerConnect.open())
+      .catch((error) => {
+        console.error("Failed to open Teller Connect", error);
+      });
+  }
+
+  // Resolves once this.tellerConnect is set up, retrying the script load if
+  // an earlier attempt (e.g. the one connect() kicked off) failed or timed
+  // out -- so a transient network blip on page load doesn't leave the
+  // "Connect with Teller" button permanently dead until a full reload.
+  ensureSetup() {
+    if (this.tellerConnect) return Promise.resolve(this.tellerConnect);
+
+    const connectionToken = this._connectionToken;
+
+    return this.waitForTellerConnect().then(() => {
+      if (connectionToken !== this._connectionToken) {
+        throw new Error("Teller Connect controller disconnected");
+      }
+
+      this.tellerConnect = TellerConnect.setup({
+        applicationId: this.applicationIdValue,
+        environment: this.environmentValue,
+        products: ["transactions", "balance"],
+        onSuccess: (enrollment) => {
+          this.accessTokenTarget.value = enrollment.accessToken;
+          this.enrollmentIdTarget.value = enrollment.enrollment.id;
+          this.institutionNameTarget.value =
+            enrollment.enrollment.institution.name;
+          this.formTarget.requestSubmit();
+        },
+      });
+
+      return this.tellerConnect;
+    });
   }
 }
