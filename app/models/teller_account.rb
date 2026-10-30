@@ -5,6 +5,7 @@ class TellerAccount < ApplicationRecord
   has_one :account, through: :account_provider, source: :account
 
   validates :teller_account_id, presence: true
+  validates :balance_sign_override, inclusion: { in: %w[credit debt] }, allow_nil: true
 
   def current_account
     account
