@@ -1,0 +1,11 @@
+chase_checking:
+  teller_item: chase_connection
+  account: depository
+  teller_account_id: "acc_fixture_checking"
+  name: "Checking"
+  account_type: "depository"
+  account_subtype: "checking"
+  currency: "USD"
+  last_four: "7723"
+  current_balance: 1500.00
+  available_balance: 1450.00

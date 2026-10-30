@@ -1,0 +1,7 @@
+chase_connection:
+  family: dylan_family
+  name: "Chase Connection"
+  access_token: "token_fixture_abc123"
+  enrollment_id: "enr_fixture_abc123"
+  institution_name: "Chase"
+  status: "good"

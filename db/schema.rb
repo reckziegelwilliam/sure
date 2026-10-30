@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_20_090001) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_30_021629) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1604,7 +1604,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_090001) do
     t.integer "term_months"
     t.datetime "updated_at", null: false
     t.jsonb "variable_rate_schedule", default: {}, null: false
-    t.check_constraint "day_count_convention::text = ANY (ARRAY['thirty_360'::character varying, 'actual_365'::character varying, 'actual_actual'::character varying]::text[])", name: "chk_loans_day_count_convention"
+    t.check_constraint "day_count_convention::text = ANY (ARRAY['thirty_360'::character varying::text, 'actual_365'::character varying::text, 'actual_actual'::character varying::text])", name: "chk_loans_day_count_convention"
     t.check_constraint "down_payment IS NULL OR down_payment >= 0::numeric", name: "chk_loans_down_payment_non_negative"
     t.check_constraint "insurance_rate IS NULL OR insurance_rate >= 0::numeric", name: "chk_loans_insurance_rate_non_negative"
     t.check_constraint "insurance_rate_type IS NULL OR (insurance_rate_type::text = ANY (ARRAY['level_term'::character varying::text, 'decreasing_life'::character varying::text]))", name: "chk_loans_insurance_rate_type"
@@ -1971,7 +1971,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_090001) do
     t.datetime "updated_at", null: false
     t.integer "year_built"
     t.index ["avm_last_synced_on"], name: "index_properties_on_avm_provider_sync", order: "NULLS FIRST", where: "(avm_provider IS NOT NULL)"
-    t.check_constraint "avm_provider IS NULL OR (avm_provider::text = ANY (ARRAY['rentcast'::character varying, 'realie'::character varying, 'chimnie'::character varying]::text[]))", name: "properties_avm_provider_check"
+    t.check_constraint "avm_provider IS NULL OR (avm_provider::text = ANY (ARRAY['rentcast'::character varying::text, 'realie'::character varying::text, 'chimnie'::character varying::text]))", name: "properties_avm_provider_check"
   end
 
   create_table "provider_request_counts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2661,6 +2661,44 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_090001) do
     t.index ["family_id"], name: "index_tags_on_family_id"
   end
 
+  create_table "teller_accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id"
+    t.string "account_subtype"
+    t.string "account_type"
+    t.decimal "available_balance", precision: 19, scale: 4
+    t.string "balance_sign_override"
+    t.datetime "created_at", null: false
+    t.string "currency"
+    t.decimal "current_balance", precision: 19, scale: 4
+    t.string "last_four"
+    t.string "name"
+    t.jsonb "raw_payload"
+    t.string "teller_account_id", null: false
+    t.uuid "teller_item_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_teller_accounts_on_account_id"
+    t.index ["teller_item_id", "teller_account_id"], name: "index_teller_accounts_on_item_and_teller_id", unique: true
+    t.index ["teller_item_id"], name: "index_teller_accounts_on_teller_item_id"
+    t.check_constraint "balance_sign_override::text = ANY (ARRAY['credit'::character varying, 'debt'::character varying]::text[])", name: "teller_accounts_balance_sign_override_check"
+  end
+
+  create_table "teller_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "access_token", null: false
+    t.datetime "created_at", null: false
+    t.string "enrollment_id", null: false
+    t.uuid "family_id", null: false
+    t.string "institution_name"
+    t.string "name", null: false
+    t.uuid "owner_id"
+    t.jsonb "raw_payload"
+    t.boolean "scheduled_for_deletion", default: false, null: false
+    t.string "status", default: "good", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_id", "enrollment_id"], name: "index_teller_items_on_family_id_and_enrollment_id", unique: true
+    t.index ["family_id"], name: "index_teller_items_on_family_id"
+    t.index ["owner_id"], name: "index_teller_items_on_owner_id"
+  end
+
   create_table "tool_calls", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.jsonb "extra_content"
@@ -3131,6 +3169,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_090001) do
   add_foreign_key "syncs", "syncs", column: "parent_id"
   add_foreign_key "taggings", "tags"
   add_foreign_key "tags", "families"
+  add_foreign_key "teller_accounts", "accounts", on_delete: :nullify
+  add_foreign_key "teller_accounts", "teller_items"
+  add_foreign_key "teller_items", "families"
+  add_foreign_key "teller_items", "users", column: "owner_id"
   add_foreign_key "tool_calls", "messages"
   add_foreign_key "trade_republic_accounts", "trade_republic_items"
   add_foreign_key "trade_republic_items", "families"
