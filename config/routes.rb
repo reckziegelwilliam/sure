@@ -879,6 +879,16 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :teller_items, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
+    member do
+      post :sync
+    end
+    collection do
+      get :select_existing_account
+      post :link_existing_account
+    end
+  end
+
   resources :lunchflow_items, only: %i[index new create show edit update destroy] do
     collection do
       get :preload_accounts
