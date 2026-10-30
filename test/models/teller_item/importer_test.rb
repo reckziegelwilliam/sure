@@ -62,7 +62,7 @@ class TellerItem::ImporterTest < ActiveSupport::TestCase
     }
     balances_payload = { ledger: "2500.00", available: "2400.00", account_id: "acc_unlinked_new" }
 
-    @provider.expects(:get_accounts).with(@item.access_token).returns([unlinked_account_payload])
+    @provider.expects(:get_accounts).with(@item.access_token).returns([ unlinked_account_payload ])
     @provider.expects(:get_balances).with(@item.access_token, "acc_unlinked_new").returns(balances_payload)
     # Explicitly do NOT set up get_transactions for this unlinked account—calling it would raise an error
     @provider.expects(:get_transactions).never
