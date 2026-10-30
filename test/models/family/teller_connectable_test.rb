@@ -31,12 +31,14 @@ class Family::TellerConnectableTest < ActiveSupport::TestCase
   end
 
   test "create_teller_item! enqueues a sync" do
-    assert_enqueued_with(job: TellerConnectionUpdateJob) do
-      @family.create_teller_item!(
-        access_token: "token_new_abc",
-        enrollment_id: "enr_new_abc",
-        institution_name: "Bank of Example"
-      )
+    assert_difference "Sync.count", 1 do
+      assert_enqueued_with(job: SyncJob) do
+        @family.create_teller_item!(
+          access_token: "token_new_abc",
+          enrollment_id: "enr_new_abc",
+          institution_name: "Bank of Example"
+        )
+      end
     end
   end
 end

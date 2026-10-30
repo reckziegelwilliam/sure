@@ -27,27 +27,28 @@ class TellerItemsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create enqueues a sync job" do
-    assert_enqueued_with(job: TellerConnectionUpdateJob) do
+    assert_enqueued_with(job: SyncJob) do
       post teller_items_path, params: {
         teller_item: { access_token: "t", enrollment_id: "e", institution_name: "Bank" }
       }
     end
   end
 
-  test "destroy soft-deletes via scheduled_for_deletion" do
+  test "destroy flags for deletion and enqueues DestroyJob" do
     item = teller_items(:chase_connection)
 
-    assert_difference "TellerItem.count", 0 do
+    assert_enqueued_with(job: DestroyJob, args: [ item ]) do
       delete teller_item_path(item)
     end
 
     assert item.reload.scheduled_for_deletion
+    assert_response :see_other
   end
 
-  test "sync enqueues the connection update job" do
+  test "sync enqueues a sync job" do
     item = teller_items(:chase_connection)
 
-    assert_enqueued_with(job: TellerConnectionUpdateJob, args: [ item ]) do
+    assert_enqueued_with(job: SyncJob) do
       post sync_teller_item_path(item)
     end
   end
@@ -63,6 +64,15 @@ class TellerItemsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :see_other
     assert_equal account, teller_account.reload.current_account
+  end
+
+  test "select_existing_account renders unlinked teller accounts for the family" do
+    account = accounts(:depository)
+
+    get select_existing_account_teller_items_path(account_id: account.id)
+
+    assert_response :success
+    assert_select "input[name='teller_account_id'][value=?]", teller_accounts(:chase_checking).id
   end
 
   test "link_existing_account rejects a teller account from a different family" do

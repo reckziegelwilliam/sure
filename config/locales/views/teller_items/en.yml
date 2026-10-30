@@ -11,3 +11,11 @@ en:
     sync_status:
       good: "Connected"
       requires_update: "Needs reconnection"
+    select_existing_account:
+      title: "Link %{account_name} to Teller"
+      link_account: "Link account"
+      cancel: "Cancel"
+      no_accounts_found: "No Teller accounts found for this account."
+      wait_for_sync: "If you just connected or synced, try again after the sync completes."
+    link_existing_account:
+      success: "Account linked successfully."
