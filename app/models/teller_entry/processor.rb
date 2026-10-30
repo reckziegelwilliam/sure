@@ -15,6 +15,12 @@ class TellerEntry::Processor
   end
 
   def process
+    # Skip pending transactions when pending inclusion is disabled. Without this guard
+    # the TELLER_INCLUDE_PENDING/syncs_include_pending setting only affects the API
+    # request, while pending rows already stored in raw_transactions_payload would still
+    # be (re)created here on every sync - including ones the user manually deleted.
+    return if pending? && !pending_enabled?
+
     import_adapter.import_transaction(
       external_id: external_id,
       amount: amount,
@@ -35,6 +41,16 @@ class TellerEntry::Processor
     def teller_transaction = @teller_transaction
 
     def pending? = self.class.pending?(data)
+
+    # Whether pending transactions should be imported. Mirrors the resolution order used
+    # by other provider importers: env var (when set) over runtime Setting.
+    def pending_enabled?
+      if ENV["TELLER_INCLUDE_PENDING"].present?
+        ENV["TELLER_INCLUDE_PENDING"] == "true"
+      else
+        Setting.syncs_include_pending
+      end
+    end
 
     def import_adapter
       @import_adapter ||= @shared_import_adapter || Account::ProviderImportAdapter.new(account)
