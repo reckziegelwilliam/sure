@@ -16,4 +16,8 @@ class TellerItem < ApplicationRecord
   def institution_url
     nil
   end
+
+  def sync_later
+    TellerConnectionUpdateJob.perform_later(self)
+  end
 end
