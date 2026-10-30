@@ -17,7 +17,10 @@ class TellerItem < ApplicationRecord
     nil
   end
 
-  def sync_later
+  # Accepts the same keywords as Syncable#sync_later (Family::Syncer calls
+  # every syncable this way via reflection) even though Teller's polling
+  # importer always does a full fetch and ignores them.
+  def sync_later(parent_sync: nil, window_start_date: nil, window_end_date: nil)
     TellerConnectionUpdateJob.perform_later(self)
   end
 end
