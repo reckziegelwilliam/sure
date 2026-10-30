@@ -22,6 +22,7 @@ class ProviderConnectionStatus
     { key: "mercury", type: "MercuryItem", association: :mercury_items, accounts: :mercury_accounts },
     { key: "brex", type: "BrexItem", association: :brex_items, accounts: :brex_accounts },
     { key: "sophtron", type: "SophtronItem", association: :sophtron_items, accounts: :sophtron_accounts },
+    { key: "teller", type: "TellerItem", association: :teller_items, accounts: :teller_accounts },
     { key: "indexa_capital", type: "IndexaCapitalItem", association: :indexa_capital_items, accounts: :indexa_capital_accounts },
     { key: "trading212", type: "Trading212Item", association: :trading212_items, accounts: :trading212_accounts },
     { key: "trade_republic", type: "TradeRepublicItem", association: :trade_republic_items, accounts: :trade_republic_accounts },
