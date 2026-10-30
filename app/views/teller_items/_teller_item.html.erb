@@ -36,11 +36,7 @@
             <% else %>
               <p class="text-secondary">
                 <% if teller_item.last_synced_at %>
-                  <% if teller_item.sync_status_summary %>
-                    <%= t(".status_with_summary", timestamp: time_ago_in_words(teller_item.last_synced_at), summary: teller_item.sync_status_summary) %>
-                  <% else %>
-                    <%= t(".status", timestamp: time_ago_in_words(teller_item.last_synced_at)) %>
-                  <% end %>
+                  <%= t(".status_with_summary", timestamp: time_ago_in_words(teller_item.last_synced_at), summary: teller_item.sync_status_summary) %>
                 <% else %>
                   <%= t(".status_never") %>
                 <% end %>

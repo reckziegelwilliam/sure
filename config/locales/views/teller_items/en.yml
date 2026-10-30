@@ -25,7 +25,6 @@ en:
       setup_action: Set Up New Accounts
       setup_description: "%{linked} of %{total} accounts linked. Choose account types for your newly imported Teller accounts."
       setup_needed: New accounts ready to set up
-      status: "Synced %{timestamp} ago"
       status_never: Never synced
       status_with_summary: "Last synced %{timestamp} ago - %{summary}"
       syncing: Syncing...
@@ -42,7 +41,8 @@ en:
       subtitle: "Choose the correct account types for your imported accounts"
       account_type_label: "Account Type:"
       choose_account_type: "Choose the correct account type for each Teller account:"
-      balance: Balance
+      select_subtype: Select subtype
+      select_type: Select type
       cancel: Cancel
       create_accounts: Create Accounts
       creating_accounts: Creating Accounts...
