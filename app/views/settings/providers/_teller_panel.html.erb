@@ -29,7 +29,7 @@
 
   <% if teller_items.any? %>
     <div class="divide-y divide-primary">
-      <%= render partial: "teller_items/teller_item", collection: teller_items, as: :teller_item %>
+      <%= render partial: "teller_items/connection", collection: teller_items, as: :teller_item %>
     </div>
   <% end %>
 </div>

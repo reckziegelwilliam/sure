@@ -23,7 +23,8 @@ export default class extends Controller {
           onSuccess: (enrollment) => {
             this.accessTokenTarget.value = enrollment.accessToken;
             this.enrollmentIdTarget.value = enrollment.enrollment.id;
-            this.institutionNameTarget.value = enrollment.enrollment.institution.name;
+            this.institutionNameTarget.value =
+              enrollment.enrollment.institution.name;
             this.formTarget.requestSubmit();
           },
         });
@@ -44,7 +45,7 @@ export default class extends Controller {
 
     return new Promise((resolve, reject) => {
       let tellerScript = document.querySelector(
-        'script[src*="cdn.teller.io/connect/connect.js"]'
+        'script[src*="cdn.teller.io/connect/connect.js"]',
       );
 
       // Reject if the CDN request stalls without firing load or error
@@ -74,7 +75,7 @@ export default class extends Controller {
           tellerScript.dataset.tellerConnectState = "loaded";
           resolve();
         },
-        { once: true }
+        { once: true },
       );
       tellerScript.addEventListener(
         "error",
@@ -83,7 +84,7 @@ export default class extends Controller {
           tellerScript.dataset.tellerConnectState = "error";
           reject(new Error("Failed to load Teller Connect script"));
         },
-        { once: true }
+        { once: true },
       );
 
       // Re-check after attaching listeners in case the script loaded between
