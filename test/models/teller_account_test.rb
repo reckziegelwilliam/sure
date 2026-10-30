@@ -8,6 +8,8 @@ class TellerAccountTest < ActiveSupport::TestCase
 
   test "current_account returns linked internal Account" do
     account = teller_accounts(:chase_checking)
+    AccountProvider.create!(account: accounts(:depository), provider: account)
+
     assert_equal accounts(:depository), account.current_account
   end
 end

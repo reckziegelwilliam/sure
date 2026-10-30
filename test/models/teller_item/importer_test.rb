@@ -4,6 +4,7 @@ class TellerItem::ImporterTest < ActiveSupport::TestCase
   setup do
     @item = teller_items(:chase_connection)
     @provider = mock("Provider::Teller")
+    AccountProvider.create!(account: accounts(:depository), provider: teller_accounts(:chase_checking))
   end
 
   test "import fetches accounts, balances, and transactions, then processes each transaction" do
@@ -76,7 +77,7 @@ class TellerItem::ImporterTest < ActiveSupport::TestCase
     # Assert the TellerAccount was created with balances populated
     unlinked_account = @item.teller_accounts.find_by(teller_account_id: "acc_unlinked_new")
     assert_not_nil unlinked_account
-    assert_nil unlinked_account.account_id, "Unlinked account should have no account_id"
+    assert_nil unlinked_account.current_account, "Unlinked account should have no linked Account"
     assert_equal 2500.00, unlinked_account.current_balance
     assert_equal 2400.00, unlinked_account.available_balance
   end

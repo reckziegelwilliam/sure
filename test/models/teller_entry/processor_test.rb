@@ -3,6 +3,7 @@ require "test_helper"
 class TellerEntry::ProcessorTest < ActiveSupport::TestCase
   setup do
     @teller_account = teller_accounts(:chase_checking)
+    AccountProvider.create!(account: accounts(:depository), provider: @teller_account)
   end
 
   test "pending? is true when status is pending" do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_30_021629) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_30_044848) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -2662,7 +2662,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_021629) do
   end
 
   create_table "teller_accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "account_id"
     t.string "account_subtype"
     t.string "account_type"
     t.decimal "available_balance", precision: 19, scale: 4
@@ -2676,7 +2675,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_021629) do
     t.string "teller_account_id", null: false
     t.uuid "teller_item_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_teller_accounts_on_account_id"
     t.index ["teller_item_id", "teller_account_id"], name: "index_teller_accounts_on_item_and_teller_id", unique: true
     t.index ["teller_item_id"], name: "index_teller_accounts_on_teller_item_id"
     t.check_constraint "balance_sign_override::text = ANY (ARRAY['credit'::character varying, 'debt'::character varying]::text[])", name: "teller_accounts_balance_sign_override_check"
@@ -3169,7 +3167,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_021629) do
   add_foreign_key "syncs", "syncs", column: "parent_id"
   add_foreign_key "taggings", "tags"
   add_foreign_key "tags", "families"
-  add_foreign_key "teller_accounts", "accounts", on_delete: :nullify
   add_foreign_key "teller_accounts", "teller_items"
   add_foreign_key "teller_items", "families"
   add_foreign_key "teller_items", "users", column: "owner_id"

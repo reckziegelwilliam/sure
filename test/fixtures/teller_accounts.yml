@@ -1,6 +1,5 @@
 chase_checking:
   teller_item: chase_connection
-  account: depository
   teller_account_id: "acc_fixture_checking"
   name: "Checking"
   account_type: "depository"
