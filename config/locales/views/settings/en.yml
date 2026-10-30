@@ -672,6 +672,10 @@ en:
         setup_token_label: "Setup Token"
         setup_token_placeholder: "Paste SimpleFIN setup token"
         save_and_connect: "Save and connect"
+      teller_panel:
+        title: "Teller"
+        description: "Connect your US bank accounts via Teller"
+        connect_button: "Connect with Teller"
       plaid_panel:
         step_1_html: "Open the %{link} and copy your Client ID and Secret Key."
         step_2: "Pick an environment. Use sandbox for testing and production for real accounts."

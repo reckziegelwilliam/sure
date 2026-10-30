@@ -1,0 +1,13 @@
+---
+en:
+  teller_items:
+    new:
+      title: "Connect a bank via Teller"
+    sync:
+      button: "Sync now"
+    destroy:
+      button: "Disconnect"
+      confirm: "Disconnect this bank connection? Historical transactions are kept."
+    sync_status:
+      good: "Connected"
+      requires_update: "Needs reconnection"
