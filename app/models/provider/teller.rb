@@ -71,7 +71,8 @@ class Provider::Teller
       cert_path = Rails.configuration.x.teller.cert_path
       key_path = Rails.configuration.x.teller.key_path
       if cert_path.present? && key_path.present?
-        opts[:pem] = File.read(cert_path)
+        # HTTParty's :pem option expects certificate and key concatenated into one PEM blob
+        opts[:pem] = File.read(cert_path) + File.read(key_path)
         opts[:pem_password] = nil
       end
 
