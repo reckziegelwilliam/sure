@@ -51,4 +51,38 @@ class TellerItemsControllerTest < ActionDispatch::IntegrationTest
       post sync_teller_item_path(item)
     end
   end
+
+  test "link_existing_account links a teller account owned by the current family" do
+    teller_account = teller_accounts(:chase_checking)
+    account = accounts(:depository)
+
+    post link_existing_account_teller_items_path, params: {
+      account_id: account.id,
+      teller_account_id: teller_account.id
+    }
+
+    assert_response :see_other
+    assert_equal account, teller_account.reload.current_account
+  end
+
+  test "link_existing_account rejects a teller account from a different family" do
+    other_family = Family.create!(name: "Other Family")
+    other_item = TellerItem.create!(
+      family: other_family,
+      name: "Other Bank",
+      access_token: "token_other",
+      enrollment_id: "enr_other"
+    )
+    other_teller_account = TellerAccount.create!(
+      teller_item: other_item,
+      teller_account_id: "acc_other_family"
+    )
+
+    post link_existing_account_teller_items_path, params: {
+      account_id: accounts(:depository).id,
+      teller_account_id: other_teller_account.id
+    }
+
+    assert_response :not_found
+  end
 end

@@ -62,7 +62,9 @@ class TellerItemsController < ApplicationController
 
   def link_existing_account
     account = Current.family.accounts.find(params[:account_id])
-    teller_account = TellerAccount.find(params[:teller_account_id])
+    teller_account = TellerAccount.joins(:teller_item)
+      .where(teller_items: { family_id: Current.family.id })
+      .find(params[:teller_account_id])
 
     AccountProvider.create!(account: account, provider: teller_account)
 
