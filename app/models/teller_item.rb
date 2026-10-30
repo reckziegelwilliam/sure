@@ -1,5 +1,5 @@
 class TellerItem < ApplicationRecord
-  include Syncable, Encryptable, Unlinking, DestroyableLater
+  include Syncable, Unlinking, DestroyableLater
 
   enum :status, { good: "good", requires_update: "requires_update" }, default: :good
 
@@ -8,9 +8,16 @@ class TellerItem < ApplicationRecord
   has_many :teller_accounts, dependent: :destroy
   has_many :accounts, through: :teller_accounts
 
-  if encryption_ready?
-    encrypts :access_token, deterministic: true
-  end
+  # Deliberately NOT gated behind Encryptable#encryption_ready? (as most
+  # provider items are): that check is `explicitly_configured?`, which misses
+  # the self-hosted default where encryption keys are auto-derived from
+  # SECRET_KEY_BASE (config/initializers/active_record_encryption.rb) rather
+  # than set via env/credentials. Gating on it would silently store this
+  # access_token -- a live bank credential -- in plaintext on the standard
+  # self-hosted deployment. Encrypting unconditionally fails loudly instead
+  # if encryption is genuinely unavailable, which is the right failure mode
+  # for a credential this sensitive.
+  encrypts :access_token, deterministic: true
 
   validates :name, :access_token, :enrollment_id, presence: true
 

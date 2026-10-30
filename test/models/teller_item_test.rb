@@ -14,15 +14,7 @@ class TellerItemTest < ActiveSupport::TestCase
       "SELECT access_token FROM teller_items WHERE id = '#{item.id}'"
     ).first["access_token"]
 
-    # Encryption is optional (see Encryptable): it's only enabled when
-    # explicitly configured via credentials or env vars, matching every
-    # other *_item model guarded the same way (AkahuItem, CoinstatsItem, etc).
-    if TellerItem.encryption_ready?
-      assert_not_equal "token_plaintext_123", raw
-    else
-      assert_equal "token_plaintext_123", raw
-    end
-
+    assert_not_equal "token_plaintext_123", raw
     assert_equal "token_plaintext_123", item.reload.access_token
   end
 
