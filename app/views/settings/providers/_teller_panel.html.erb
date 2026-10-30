@@ -1,0 +1,35 @@
+<%# app/views/settings/providers/_teller_panel.html.erb %>
+<div id="provider_panel_teller" class="space-y-4">
+  <% if local_assigns[:error] %>
+    <%= render DS::Alert.new(variant: :error, message: error) %>
+  <% end %>
+
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <%= render ProviderLogo.new(provider_key: :teller) %>
+      <div>
+        <p class="text-primary font-medium"><%= t(".title") %></p>
+        <p class="text-secondary text-sm"><%= t(".description") %></p>
+      </div>
+    </div>
+
+    <div
+      data-controller="teller-connect"
+      data-teller-connect-application-id-value="<%= Rails.configuration.x.teller.application_id %>"
+      data-teller-connect-environment-value="<%= Rails.configuration.x.teller.environment %>">
+      <%= form_with model: TellerItem.new, url: teller_items_path, data: { teller_connect_target: "form" } do |f| %>
+        <%= f.hidden_field :access_token, data: { teller_connect_target: "accessToken" } %>
+        <%= f.hidden_field :enrollment_id, data: { teller_connect_target: "enrollmentId" } %>
+        <%= f.hidden_field :institution_name, data: { teller_connect_target: "institutionName" } %>
+      <% end %>
+
+      <%= render DS::Button.new(text: t(".connect_button"), variant: "primary", data: { action: "teller-connect#open" }) %>
+    </div>
+  </div>
+
+  <% if teller_items.any? %>
+    <div class="divide-y divide-primary">
+      <%= render partial: "teller_items/teller_item", collection: teller_items, as: :teller_item %>
+    </div>
+  <% end %>
+</div>

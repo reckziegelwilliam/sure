@@ -1,0 +1,20 @@
+<%# app/views/teller_items/_teller_item.html.erb %>
+<div id="<%= dom_id(teller_item) %>" class="flex items-center justify-between py-3">
+  <div class="flex items-center gap-3">
+    <%= render ProviderLogo.new(provider_key: :teller) %>
+    <div>
+      <p class="text-primary font-medium"><%= teller_item.name %></p>
+      <p class="text-secondary text-sm">
+        <%= t("teller_items.sync_status.#{teller_item.status}", default: teller_item.status) %>
+      </p>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <%= button_to t("teller_items.sync.button"), sync_teller_item_path(teller_item), method: :post,
+          class: "text-sm text-link" %>
+    <%= button_to t("teller_items.destroy.button"), teller_item_path(teller_item), method: :delete,
+          class: "text-sm text-destructive",
+          data: { turbo_confirm: t("teller_items.destroy.confirm") } %>
+  </div>
+</div>

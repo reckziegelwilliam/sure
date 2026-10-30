@@ -1,0 +1,6 @@
+<%# app/views/teller_items/new.html.erb %>
+<% content_for :page_title, t(".title") %>
+
+<div class="max-w-lg mx-auto">
+  <%= render "settings/providers/teller_panel", teller_items: Current.family.teller_items %>
+</div>
