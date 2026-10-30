@@ -5,7 +5,12 @@ class Family::TellerConnectableTest < ActiveSupport::TestCase
 
   setup do
     @family = families(:dylan_family)
+    @original_application_id = Rails.configuration.x.teller.application_id
     Rails.configuration.x.teller.application_id = "test_app_id"
+  end
+
+  teardown do
+    Rails.configuration.x.teller.application_id = @original_application_id
   end
 
   test "can_connect_teller? is true" do
