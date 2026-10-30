@@ -1,5 +1,6 @@
 <%# app/views/settings/providers/_teller_panel.html.erb %>
-<div id="provider_panel_teller" class="space-y-4">
+<% teller_items = local_assigns.fetch(:teller_items, @teller_items) %>
+<div id="teller-providers-panel" class="space-y-4">
   <% if local_assigns[:error] %>
     <%= render DS::Alert.new(variant: :error, message: error) %>
   <% end %>
@@ -27,7 +28,7 @@
     </div>
   </div>
 
-  <% if teller_items.any? %>
+  <% if teller_items.present? && teller_items.any? %>
     <div class="divide-y divide-primary">
       <%= render partial: "teller_items/connection", collection: teller_items, as: :teller_item %>
     </div>

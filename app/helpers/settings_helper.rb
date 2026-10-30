@@ -88,6 +88,9 @@ module SettingsHelper
     when "mercury"
       return { status: :off } unless @mercury_items&.any?
       sync_based_summary(key)
+    when "teller"
+      return { status: :off } unless @teller_items&.any?
+      sync_based_summary(key)
     when "redbark"
       return { status: :off } unless @redbark_items&.any?
       sync_based_summary(key)

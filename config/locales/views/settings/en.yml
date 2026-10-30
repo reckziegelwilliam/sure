@@ -482,6 +482,7 @@ en:
         coinstats: Track your entire crypto portfolio across wallets and exchanges.
         wise: Sync your Wise multi-currency balances and international transfers automatically.
         mercury: Sync your Mercury business banking accounts automatically.
+        teller: Connect your US bank accounts via Teller.
         brex: Sync Brex cash and corporate card activity with read-only access.
         coinbase: Import your Coinbase crypto holdings and track performance.
         binance: Sync your Binance spot balances using a read-only API key.

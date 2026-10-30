@@ -214,6 +214,7 @@ class Settings::ProvidersController < ApplicationController
       { key: "coinstats",      title: "CoinStats",       turbo_id: "coinstats",      partial: "coinstats_panel" },
       { key: "wise",           title: "Wise",            turbo_id: "wise",           partial: "wise_panel" },
       { key: "mercury",        title: "Mercury",         turbo_id: "mercury",        partial: "mercury_panel" },
+      { key: "teller",         title: "Teller",          turbo_id: "teller",         partial: "teller_panel" },
       { key: "brex",           title: "Brex",            turbo_id: "brex",           partial: "brex_panel" },
       { key: "coinbase",       title: "Coinbase",        turbo_id: "coinbase",       partial: "coinbase_panel" },
       { key: "binance",        title: "Binance",         turbo_id: "binance",        partial: "binance_panel" },
@@ -245,6 +246,7 @@ class Settings::ProvidersController < ApplicationController
       "coinstats"      => "CoinstatsItem",
       "wise"           => "WiseItem",
       "mercury"        => "MercuryItem",
+      "teller"         => "TellerItem",
       "brex"           => "BrexItem",
       "coinbase"       => "CoinbaseItem",
       "binance"        => "BinanceItem",
@@ -284,6 +286,8 @@ class Settings::ProvidersController < ApplicationController
         @wise_items = Current.family.wise_items.active.ordered.includes(:syncs, :wise_accounts)
       when "mercury"
         @mercury_items = Current.family.mercury_items.active.ordered.includes(:syncs, :mercury_accounts)
+      when "teller"
+        @teller_items = Current.family.teller_items.active.ordered.includes(:syncs, :teller_accounts)
       when "brex"
         @brex_items = Current.family.brex_items.active.ordered.includes(:syncs, :brex_accounts)
       when "coinbase"
@@ -336,6 +340,7 @@ class Settings::ProvidersController < ApplicationController
       @coinstats_items = Current.family.coinstats_items.ordered # CoinStats panel needs account info for status display
       @wise_items = Current.family.wise_items.active.ordered
       @mercury_items = Current.family.mercury_items.active.ordered
+      @teller_items = Current.family.teller_items.active.ordered
       @brex_items = Current.family.brex_items.active.ordered
       @coinbase_items = Current.family.coinbase_items.ordered # Coinbase panel needs name and sync info for status display
       @snaptrade_items = Current.family.snaptrade_items.ordered
@@ -387,6 +392,7 @@ class Settings::ProvidersController < ApplicationController
         "coinstats"      => @coinstats_items,
         "wise"           => @wise_items,
         "mercury"        => @mercury_items,
+        "teller"         => @teller_items,
         "brex"           => @brex_items,
         "coinbase"       => @coinbase_items,
         "binance"        => @binance_items,
